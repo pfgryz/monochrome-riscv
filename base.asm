@@ -14,8 +14,8 @@ __:			.space 	2
 image_struct_header:	.space	BMP_HEADER_T_SIZE
 image_struct_image:	.space	IMAGE_MAX_SIZE
 
-input_filename:		.asciz	"examples/tree.bmp"
-output_filename:	.asciz 	"output/tree.bmp"
+input_filename:		.asciz	"examples/snail.bmp"
+output_filename:	.asciz 	"result.bmp"
 
 msg_error_arguments:	.asciz 	"Too few arguments / invalid arguments are given"
 msg_error_points:	.asciz	"Points are incorect (x1 > x2 or y1 > y2 or points are outside of the image)"
@@ -163,9 +163,7 @@ monochrome__body:
 	add	a3, a3, t6
 	
 	# Calculate the end of the line
-	sub	t6, t4, t3			# X2 - X1
-	add	a4, t6, t6			# (X2 - X1) * 3
-	add	a4, a4, t6
+	sub	a4, t2, a3			# x2 - x1
 	
 	# Calculate the threshold
 	lw	t0, ARG_STRUCT_THRESHOLD(a1)
