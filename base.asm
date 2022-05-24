@@ -14,8 +14,8 @@ __:			.space 	2
 image_struct_header:	.space	BMP_HEADER_T_SIZE
 image_struct_image:	.space	IMAGE_MAX_SIZE
 
-input_filename:		.asciz	"source.bmp"
-output_filename:	.asciz 	"result.bmp"
+input_filename:		.asciz	"examples/tree.bmp"
+output_filename:	.asciz 	"output/tree.bmp"
 
 msg_error_arguments:	.asciz 	"Too few arguments / invalid arguments are given"
 msg_error_points:	.asciz	"Points are incorect (x1 > x2 or y1 > y2 or points are outside of the image)"
@@ -135,7 +135,6 @@ monochrome__body:
 	# A2 - pointer | A3 - Jump | A4 - End of line | A5 - Threshold * 100 | A6 - Counter
 	lw	a2, IMAGE_STRUCT_IMAGE_DATA(a0)
 	
-	# Calculate the address of first line to modify
 	lw	t0, IMAGE_STRUCT_WIDTH(a0)
 	lw	t1, IMAGE_STRUCT_HEIGHT(a0)
 	lw	t2, IMAGE_STRUCT_LINEBYTES(a0)
@@ -147,8 +146,8 @@ monochrome__body:
 	# Calcula the number of lines to modify
 	sub	a6, t5, a6
 	
+	# Calculate the address of first line to modify
 	sub	t6, t1, t5			# LinesToOmmit = Height - Y2
-	#addi	t6, t6, -1			# LinesToOmmit = Height - Y2 - 1
 	mul	t6, t6, t2			# BytesToOmmit = LinesToOmmit * LineBytes
 	add	a2, a2, t6			# FirstLine = ImageDataAddress + BytesToOmmit
 	
@@ -205,7 +204,7 @@ monochrome__process_pixel:
 	add	t1, t1, t4
 	add	t1, t1, t5
 	
-	add	t6, t1, t2			# Red * 21 + Green * 71 + Blue * 7
+	add	t6, t1, t2			# Red * 21 + Green * 72 + Blue * 7
 	add	t6, t6, t3
 	
 	# Check the threshold
