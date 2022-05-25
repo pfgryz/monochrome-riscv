@@ -14,7 +14,7 @@ __:			.space 	2
 image_struct_header:	.space	BMP_HEADER_T_SIZE
 image_struct_image:	.space	IMAGE_MAX_SIZE
 
-input_filename:		.asciz	"examples/snail.bmp"
+input_filename:		.asciz	"examples/tree.bmp"
 output_filename:	.asciz 	"result.bmp"
 
 msg_error_arguments:	.asciz 	"Too few arguments / invalid arguments are given"
@@ -185,28 +185,27 @@ monochrome__process_pixel:
 	lbu	t3, 2(a2)			# (R)ed
 	
 	# Calculate the value of threshold
-	# > Red
-	slli	t4, t3, 2			# Red * 21
-	add	t3, t3, t4
-	slli	t4, t4, 2
-	add	t3, t3, t4
+	# > Red (Red * 21)
+	slli	t4, t3, 2			# Red * 4 
+	add	t3, t3, t4			# (Red * 4) + Red = Red * 5
+	slli	t4, t4, 2			# (Red * 4) * 4 = Red * 16
+	add	t3, t3, t4			# (Red * 5) + (Red * 16) = Red * 21
 	
-	# > Green
-	slli	t2, t2, 3			# Green * 72
-	slli	t4, t2, 3
-	add	t2, t2, t4	
+	# > Green (Green * 72)
+	slli	t2, t2, 3			# Green * 8
+	slli	t4, t2, 3			# (Green * 8) * 8 = Green * 64
+	add	t2, t2, t4			# (Green * 8) + (Green * 64)
 
-	# > Blue
-	add	t4, t1, t1			# Blue * 7
-	add	t5, t4, t4
-	add	t1, t1, t4
-	add	t1, t1, t5
+	# > Blue (Blue * 7)
+	slli	t4, t1, 3			# Blue * 8
+	sub	t1, t4, t1			# (Blue * 8) - Blue
 	
-	add	t6, t1, t2			# Red * 21 + Green * 72 + Blue * 7
+	# > Sum (Red * 21 + Green * 72 + Blue * 7)
+	add	t6, t1, t2
 	add	t6, t6, t3
 	
 	# Check the threshold
-	li	t5, 255				# Check the inequality
+	li	t5, 255				# Check the inequality Threshold * 100 >= Red * 21 + Green * 72 + Blue * 7
 	bgtu	t6, a5, monochrome__put_pixel
 	mv	t5, zero
 monochrome__put_pixel:
